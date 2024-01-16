@@ -14,12 +14,13 @@ base_url="https://www.rtvs.sk"
 
 pc=0
 while [[ $start_date != $current_date ]]; do
-  ((pc++))
+  
   echo "Date: $start_date"
   year=$(echo "$start_date" | cut -d'-' -f1)
   month=$(echo "$start_date" | cut -d'-' -f2)
   
   for prog in $(curl -s "${base_url}/json/snippet_archive_series_calendar.json?id=${program_id}&m=${start_date}"|jq -r '.snippets|."snippet-calendar-calendar"'|pup 'a attr{href}'|grep televizia); do
+    ((pc++))
     echo "Program url: $prog"
     #download and parse the page
     embed_url=$(curl -s "${base_url}${prog}" | pup 'iframe.player-iframe attr{src}')
@@ -46,6 +47,5 @@ while [[ $start_date != $current_date ]]; do
   
   # Format the incremented date
   start_date="${year}-${month}"
-  exit 1
 done
 
